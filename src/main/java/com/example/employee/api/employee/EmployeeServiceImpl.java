@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.employee.api.common.exception.EmployeeNotFoundException;
+import com.example.employee.api.exception.EmployeeNotFoundException;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -31,11 +31,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    Employee existing = employeeRepository.findById(id)
 	        .orElseThrow(() -> new EmployeeNotFoundException(id));
 
-	    existing = new Employee(
-                id,
-                employee.name(),
-                employee.department(),
-                employee.salary());
+	    existing.setName(employee.getName());
+	    existing.setDepartment(employee.getDepartment());
+	    existing.setSalary(employee.getSalary());
 
 	    return employeeRepository.save(existing);
 	}
@@ -46,5 +44,9 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    }
 
 	    employeeRepository.deleteById(id);
+	}
+	
+	public long getEmployeeCount() {
+		return employeeRepository.count();
 	}
 }

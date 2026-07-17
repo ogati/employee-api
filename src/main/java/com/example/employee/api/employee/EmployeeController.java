@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.employee.api.common.dto.CountResponse;
+
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
@@ -23,13 +25,13 @@ public class EmployeeController {
 	}
 
 	@GetMapping
-    public ResponseEntity<List<Employee>> getAllEmployees() {
-        return ResponseEntity.ok(employeeService.getAllEmployees());
+    public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
+        return ResponseEntity.ok(EmployeeResponse.from(employeeService.getAllEmployees()));
 	}
 
     @GetMapping("/{id}")
-    public ResponseEntity<Employee> getEmployeeById(@PathVariable Long id) {
-        return ResponseEntity.ok(employeeService.getEmployeeById(id));
+    public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable Long id) {
+        return ResponseEntity.ok(EmployeeResponse.from(employeeService.getEmployeeById(id)));
     }
 
     @PostMapping
@@ -49,5 +51,10 @@ public class EmployeeController {
     	employeeService.deleteEmployee(id);
 
         return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/count")
+    public CountResponse getEmployeeCount() {
+    	return new CountResponse(employeeService.getEmployeeCount());
     }
 }

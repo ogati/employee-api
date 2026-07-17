@@ -1,4 +1,4 @@
-package com.example.employee.api.common.config;
+package com.example.employee.api.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

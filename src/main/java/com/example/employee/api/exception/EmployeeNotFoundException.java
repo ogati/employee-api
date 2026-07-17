@@ -1,4 +1,4 @@
-package com.example.employee.api.common.exception;
+package com.example.employee.api.exception;
 
 public class EmployeeNotFoundException extends RuntimeException {
 	private static final long serialVersionUID = 1L;
