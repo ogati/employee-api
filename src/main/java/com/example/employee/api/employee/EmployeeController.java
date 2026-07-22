@@ -15,35 +15,45 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.employee.api.common.dto.CountResponse;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/employees")
 public class EmployeeController {
+	
 	private final EmployeeService employeeService;
 
 	public EmployeeController(EmployeeService employeeService) {
 		this.employeeService = employeeService;
 	}
 
-	@GetMapping
-    public ResponseEntity<List<EmployeeResponse>> getAllEmployees() {
-        return ResponseEntity.ok(EmployeeResponse.from(employeeService.getAllEmployees()));
-	}
-
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable Long id) {
         return ResponseEntity.ok(EmployeeResponse.from(employeeService.getEmployeeById(id)));
     }
-
+    
+    @GetMapping
+    public ResponseEntity<List<EmployeeResponse>> search(EmployeeSearchCriteria criteria) {
+    	return ResponseEntity.ok(EmployeeResponse.from(employeeService.search(criteria)));
+    }
+    
+    @GetMapping("/count")
+    public CountResponse getEmployeeCount() {
+    	return new CountResponse(employeeService.count());
+    }
+    
     @PostMapping
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
-    	Employee createdEmployee = employeeService.createEmployee(employee);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdEmployee);
+    public ResponseEntity<EmployeeResponse> createEmployee(@Valid @RequestBody EmployeeCreateRequest request) {
+    	Employee createdEmployee = employeeService.createEmployee(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(EmployeeResponse.from(createdEmployee));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Employee> updateEmployee(@PathVariable Long id, @RequestBody Employee employee) {
-    	return ResponseEntity.ok(employeeService.updateEmployee(id, employee));
+    public ResponseEntity<EmployeeResponse> updateEmployee(
+    		@PathVariable Long id, 
+    		@Valid @RequestBody EmployeeUpdateRequest request) {
+    	Employee employee = employeeService.updateEmployee(id, request);
+    	return ResponseEntity.ok(EmployeeResponse.from(employee));
     }
 
     @DeleteMapping("/{id}")
@@ -51,10 +61,5 @@ public class EmployeeController {
     	employeeService.deleteEmployee(id);
 
         return ResponseEntity.noContent().build();
-    }
-    
-    @GetMapping("/count")
-    public CountResponse getEmployeeCount() {
-    	return new CountResponse(employeeService.getEmployeeCount());
     }
 }

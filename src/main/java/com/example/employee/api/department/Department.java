@@ -9,6 +9,7 @@ import com.example.employee.api.employee.Employee;
 @Entity
 @Table(name = "department")
 public class Department {
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

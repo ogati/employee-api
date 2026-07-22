@@ -7,6 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+	
 	@Bean
     public UrlHandlerFilter trailingSlashFilter() {
         // intercept requests so that URLs with and without a trailing slash are treated as identical
