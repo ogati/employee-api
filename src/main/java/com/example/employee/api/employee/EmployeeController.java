@@ -1,6 +1,7 @@
 package com.example.employee.api.employee;
 
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.employee.api.common.dto.CountResponse;
+import com.example.employee.api.exception.InvalidRequestException;
 
 import jakarta.validation.Valid;
 
@@ -27,9 +30,37 @@ public class EmployeeController {
 		this.employeeService = employeeService;
 	}
 
+	@GetMapping(params = "filter")
+	public ResponseEntity<List<EmployeeResponse>> getEmployeesAboveDepartmentAverage(@RequestParam String filter) {
+		if (!Objects.equals(filter, "aboveDepartmentAverage")) {
+			throw new InvalidRequestException("Missing request parameter: filter=aboveDepartmentAverage");
+		}
+		
+    	List<Employee> employees = employeeService.getEmployeesAboveDepartmentAverage();
+    	return ResponseEntity.ok(EmployeeResponse.from(employees));
+	}
+	
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable Long id) {
-        return ResponseEntity.ok(EmployeeResponse.from(employeeService.getEmployeeById(id)));
+    	Employee employee = employeeService.getEmployeeById(id);
+        return ResponseEntity.ok(EmployeeResponse.from(employee));
+    }
+    
+    @GetMapping(path = "/{id}", params = "include")
+    public ResponseEntity<EmployeeResponse> getEmployeeByIdWithDepartment(
+    		@PathVariable Long id, @RequestParam String include) {
+    	if (!Objects.equals(include, "department")) {
+			throw new InvalidRequestException("Missing request parameter: include=department");
+    	}
+    	
+    	Employee employee = employeeService.getEmployeeByIdWithDepartment(id);
+        return ResponseEntity.ok(EmployeeResponse.from(employee));
+    }
+    
+    @GetMapping(params = "departmentId")
+    public ResponseEntity<List<EmployeeResponse>> getEmployeesByDepartmentId(@RequestParam Long departmentId) {
+    	List<Employee> employees = employeeService.getEmployeesByDepartmentId(departmentId);
+    	return ResponseEntity.ok(EmployeeResponse.from(employees));
     }
     
     @GetMapping

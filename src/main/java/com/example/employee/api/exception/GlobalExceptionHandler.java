@@ -15,12 +15,12 @@ public class GlobalExceptionHandler {
 				.body(new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
 	}
 
-//	@ExceptionHandler
-//	public ResponseEntity<ErrorResponse> handleValidationException(MethodArgumentNotValidException ex) {
-//		return ResponseEntity
-//				.status(HttpStatus.BAD_REQUEST)
-//				.body(new ErrorResponse("Validation failed", HttpStatus.BAD_REQUEST.value()));
-//	}
+	@ExceptionHandler
+	public ResponseEntity<ErrorResponse> handleValidationException(InvalidRequestException ex) {
+		return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
+	}
 
 	@ExceptionHandler
 	public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {

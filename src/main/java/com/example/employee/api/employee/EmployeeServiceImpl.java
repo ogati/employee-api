@@ -1,6 +1,7 @@
 package com.example.employee.api.employee;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -24,12 +25,30 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employeeRepository.findAll();
     }
 
+	@Override
+	public List<Employee> getEmployeesAboveDepartmentAverage() {
+		List<Employee> employees = employeeRepository.findAllAboveDepartmentAverage();
+		return employees;
+	}
+	
     @Override
 	public Employee getEmployeeById(Long id) {
 	    return employeeRepository.findById(id)
 	        .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
 	}
 
+	@Override
+	public Employee getEmployeeByIdWithDepartment(Long id) {
+		Optional<Employee> optional = employeeRepository.findByIdWithDepartment(id);
+		return optional.orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
+	}
+
+	@Override
+	public List<Employee> getEmployeesByDepartmentId(Long id) {
+		List<Employee> employees = employeeRepository.findByDepartmentId(id);
+		return employees;
+	}
+	
 	@Override
 	public List<Employee> search(EmployeeSearchCriteria criteria) {
 		return employeeRepository.findAll(EmployeeSpecification.withCriteria(criteria));
