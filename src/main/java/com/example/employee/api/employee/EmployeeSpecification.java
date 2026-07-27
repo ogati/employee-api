@@ -37,7 +37,8 @@ public class EmployeeSpecification {
                         criteria.salaryGreaterThan()
                     ));
             }
-
+            
+            Predicate e = cb.and(predicates.toArray(Predicate[]::new));
             return cb.and(predicates.toArray(Predicate[]::new));
         };
     }

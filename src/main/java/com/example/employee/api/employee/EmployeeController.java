@@ -65,7 +65,8 @@ public class EmployeeController {
     
     @GetMapping
     public ResponseEntity<List<EmployeeResponse>> search(EmployeeSearchCriteria criteria) {
-    	return ResponseEntity.ok(EmployeeResponse.from(employeeService.search(criteria)));
+    	List<Employee> employees = employeeService.search(criteria);
+    	return ResponseEntity.ok(EmployeeResponse.from(employees));
     }
     
     @GetMapping("/count")
