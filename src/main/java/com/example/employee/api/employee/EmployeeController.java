@@ -3,6 +3,10 @@ package com.example.employee.api.employee;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,14 +40,14 @@ public class EmployeeController {
 			throw new InvalidRequestException("Missing request parameter: filter=aboveDepartmentAverage");
 		}
 		
-    	List<Employee> employees = employeeService.getEmployeesAboveDepartmentAverage();
-    	return ResponseEntity.ok(EmployeeResponse.from(employees));
+    	List<EmployeeResponse> employees = employeeService.getEmployeesAboveDepartmentAverage();
+    	return ResponseEntity.ok(employees);
 	}
 	
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeResponse> getEmployeeById(@PathVariable Long id) {
-    	Employee employee = employeeService.getEmployeeById(id);
-        return ResponseEntity.ok(EmployeeResponse.from(employee));
+    	EmployeeResponse employee = employeeService.getEmployeeById(id);
+        return ResponseEntity.ok(employee);
     }
     
     @GetMapping(path = "/{id}", params = "include")
@@ -53,20 +57,22 @@ public class EmployeeController {
 			throw new InvalidRequestException("Missing request parameter: include=department");
     	}
     	
-    	Employee employee = employeeService.getEmployeeByIdWithDepartment(id);
-        return ResponseEntity.ok(EmployeeResponse.from(employee));
+    	EmployeeResponse employee = employeeService.getEmployeeByIdWithDepartment(id);
+        return ResponseEntity.ok(employee);
     }
-    
+
     @GetMapping(params = "departmentId")
-    public ResponseEntity<List<EmployeeResponse>> getEmployeesByDepartmentId(@RequestParam Long departmentId) {
-    	List<Employee> employees = employeeService.getEmployeesByDepartmentId(departmentId);
-    	return ResponseEntity.ok(EmployeeResponse.from(employees));
+    public ResponseEntity<Page<EmployeeResponse>> getEmployeesByDepartmentId(
+	    	@RequestParam Long departmentId,
+	        @PageableDefault Pageable pageable) {
+    	Page<EmployeeResponse> employees = employeeService.getEmployeesByDepartmentId(departmentId, pageable);
+    	return ResponseEntity.ok(employees);
     }
     
     @GetMapping
     public ResponseEntity<List<EmployeeResponse>> search(EmployeeSearchCriteria criteria) {
-    	List<Employee> employees = employeeService.search(criteria);
-    	return ResponseEntity.ok(EmployeeResponse.from(employees));
+    	List<EmployeeResponse> employees = employeeService.search(criteria);
+    	return ResponseEntity.ok(employees);
     }
     
     @GetMapping("/count")
@@ -76,16 +82,16 @@ public class EmployeeController {
     
     @PostMapping
     public ResponseEntity<EmployeeResponse> createEmployee(@Valid @RequestBody EmployeeCreateRequest request) {
-    	Employee createdEmployee = employeeService.createEmployee(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(EmployeeResponse.from(createdEmployee));
+    	EmployeeResponse createdEmployee = employeeService.createEmployee(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdEmployee);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<EmployeeResponse> updateEmployee(
     		@PathVariable Long id, 
     		@Valid @RequestBody EmployeeUpdateRequest request) {
-    	Employee employee = employeeService.updateEmployee(id, request);
-    	return ResponseEntity.ok(EmployeeResponse.from(employee));
+    	EmployeeResponse employee = employeeService.updateEmployee(id, request);
+    	return ResponseEntity.ok(employee);
     }
 
     @DeleteMapping("/{id}")

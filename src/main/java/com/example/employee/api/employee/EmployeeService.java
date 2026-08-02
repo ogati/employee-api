@@ -2,23 +2,28 @@ package com.example.employee.api.employee;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 public interface EmployeeService {
 	
-	List<Employee> getAllEmployees();
+	List<EmployeeResponse> getAllEmployees();
 	
-	List<Employee> getEmployeesAboveDepartmentAverage();
+	List<EmployeeResponse> getEmployeesAboveDepartmentAverage();
 	
-	Employee getEmployeeById(Long id);
+	EmployeeResponse getEmployeeById(Long id);
 	
-	Employee getEmployeeByIdWithDepartment(Long id);
+	EmployeeResponse getEmployeeByIdWithDepartment(Long id);
 
-	List<Employee> getEmployeesByDepartmentId(Long id);
+	List<EmployeeResponse> getEmployeesByDepartmentId(Long id);
+	
+	Page<EmployeeResponse> getEmployeesByDepartmentId(Long id, Pageable pageable);
 
-	List<Employee> search(EmployeeSearchCriteria criteria);
+	List<EmployeeResponse> search(EmployeeSearchCriteria criteria);
 	
-	Employee createEmployee(EmployeeCreateRequest request);
+	EmployeeResponse createEmployee(EmployeeCreateRequest request);
 	
-	Employee updateEmployee(Long id, EmployeeUpdateRequest request);
+	EmployeeResponse updateEmployee(Long id, EmployeeUpdateRequest request);
 	
 	void deleteEmployee(Long id);
 	

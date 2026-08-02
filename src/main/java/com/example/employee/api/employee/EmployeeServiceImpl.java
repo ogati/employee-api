@@ -1,8 +1,9 @@
 package com.example.employee.api.employee;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.employee.api.department.Department;
@@ -21,37 +22,48 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-	public List<Employee> getAllEmployees() {
-        return employeeRepository.findAll();
+	public List<EmployeeResponse> getAllEmployees() {
+    	List<Employee> employees = employeeRepository.findAll();
+    	return EmployeeResponse.from(employees);
     }
 
 	@Override
-	public List<Employee> getEmployeesAboveDepartmentAverage() {
+	public List<EmployeeResponse> getEmployeesAboveDepartmentAverage() {
 		List<Employee> employees = employeeRepository.findAllAboveDepartmentAverage();
-		return employees;
+		return EmployeeResponse.from(employees);
 	}
 	
     @Override
-	public Employee getEmployeeById(Long id) {
-	    return employeeRepository.findById(id)
+	public EmployeeResponse getEmployeeById(Long id) {
+	    Employee employee = employeeRepository.findById(id)
 	        .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
+	    return EmployeeResponse.from(employee);
 	}
 
 	@Override
-	public Employee getEmployeeByIdWithDepartment(Long id) {
-		Optional<Employee> optional = employeeRepository.findByIdWithDepartment(id);
-		return optional.orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
+	public EmployeeResponse getEmployeeByIdWithDepartment(Long id) {
+		EmployeeResponse response= employeeRepository.findByIdWithDepartment(id)
+				.map(EmployeeResponse::from)
+				.orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
+		return response;
 	}
 
 	@Override
-	public List<Employee> getEmployeesByDepartmentId(Long id) {
+	public List<EmployeeResponse> getEmployeesByDepartmentId(Long id) {
 		List<Employee> employees = employeeRepository.findByDepartmentId(id);
-		return employees;
+		return employees.stream().map(EmployeeResponse::from).toList();
 	}
 	
 	@Override
-	public List<Employee> search(EmployeeSearchCriteria criteria) {
-		return employeeRepository.findAll(EmployeeSpecification.withCriteria(criteria));
+	public Page<EmployeeResponse> getEmployeesByDepartmentId(Long id, Pageable pageable) {
+		Page<Employee> employees = employeeRepository.findByDepartmentId(id, pageable);
+		return employees.map(EmployeeResponse::from);
+	}
+	
+	@Override
+	public List<EmployeeResponse> search(EmployeeSearchCriteria criteria) {
+		List<Employee> employees = employeeRepository.findAll(EmployeeSpecification.withCriteria(criteria));
+		return employees.stream().map(EmployeeResponse::from).toList();
 	}
 	
 	@Override
@@ -60,7 +72,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 	
 	@Override
-    public Employee createEmployee(EmployeeCreateRequest request) {
+    public EmployeeResponse createEmployee(EmployeeCreateRequest request) {
 		Department department = departmentRepository.findById(request.departmentId())
 			.orElseThrow(() -> new ResourceNotFoundException("Department not found with id: " + request.departmentId()));
 		
@@ -69,11 +81,11 @@ public class EmployeeServiceImpl implements EmployeeService {
 		employee.setSalary(request.salary());
 		employee.setDepartment(department);
 		
-        return employeeRepository.save(employee);
+        return EmployeeResponse.from(employeeRepository.save(employee));
     }
 
 	@Override
-	public Employee updateEmployee(Long id, EmployeeUpdateRequest request) {		
+	public EmployeeResponse updateEmployee(Long id, EmployeeUpdateRequest request) {		
 	    Employee existing = employeeRepository.findById(id)
 		    .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));
 		Department department = departmentRepository.findById(request.departmentId())
@@ -82,7 +94,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 	    existing.setSalary(request.salary());
 	    existing.setDepartment(department);
 
-	    return employeeRepository.save(existing);
+	    return EmployeeResponse.from(employeeRepository.save(existing));
 	}
 
 	@Override

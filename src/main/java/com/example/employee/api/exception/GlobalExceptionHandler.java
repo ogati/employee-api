@@ -8,21 +8,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	
-	@ExceptionHandler
+	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<ErrorResponse> handleResourceNotFound(ResourceNotFoundException ex) {
 		return ResponseEntity
 				.status(HttpStatus.NOT_FOUND)
 				.body(new ErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND.value()));
 	}
 
-	@ExceptionHandler
+	@ExceptionHandler(InvalidRequestException.class)
 	public ResponseEntity<ErrorResponse> handleValidationException(InvalidRequestException ex) {
 		return ResponseEntity
 				.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST.value()));
 	}
 
-	@ExceptionHandler
+	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
 		return ResponseEntity
 				.status(HttpStatus.INTERNAL_SERVER_ERROR)

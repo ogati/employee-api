@@ -2,8 +2,10 @@ package com.example.employee.api.employee;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 public record EmployeeResponse(Long id, String name, Long salary, String departmentName) {
-	
+
 	public static EmployeeResponse from(Employee employee) {
 		return new EmployeeResponse(
 			employee.getId(),
@@ -14,12 +16,10 @@ public record EmployeeResponse(Long id, String name, Long salary, String departm
 	}
 	
 	public static List<EmployeeResponse> from(List<Employee> employees) {
-		return employees.stream()
-				.map(e -> new EmployeeResponse(
-						e.getId(), 
-						e.getName(), 
-						e.getSalary(), 
-						e.getDepartment().getName()))
-				.toList();
+		return employees.stream().map(EmployeeResponse::from).toList();
+	}
+	
+	public static Page<EmployeeResponse> from(Page<Employee> employees) {
+		return employees.map(EmployeeResponse::from);
 	}
 }
