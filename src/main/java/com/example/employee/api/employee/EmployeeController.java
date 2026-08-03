@@ -2,9 +2,11 @@ package com.example.employee.api.employee;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,12 @@ import jakarta.validation.Valid;
 @RequestMapping("/employees")
 public class EmployeeController {
 	
+	private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
+	        "name",
+	        "salary",
+	        "department"
+	);
+
 	private final EmployeeService employeeService;
 
 	public EmployeeController(EmployeeService employeeService) {
@@ -64,6 +72,13 @@ public class EmployeeController {
     public ResponseEntity<Page<EmployeeResponse>> getEmployeesByDepartmentId(
 	    	@RequestParam Long departmentId,
 	        @PageableDefault Pageable pageable) {
+    	for (Sort.Order order : pageable.getSort()) {
+    	    if (!ALLOWED_SORT_FIELDS.contains(order.getProperty())) {
+    	        throw new InvalidRequestException(
+    	                "Invalid sort field: " + order.getProperty());
+    	    }
+    	}
+    	
     	Page<EmployeeResponse> employees = employeeService.getEmployeesByDepartmentId(departmentId, pageable);
     	return ResponseEntity.ok(employees);
     }
