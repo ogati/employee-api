@@ -22,9 +22,15 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-	public List<EmployeeResponse> getAllEmployees() {
+	public List<EmployeeResponse> getEmployees() {
     	List<Employee> employees = employeeRepository.findAll();
     	return EmployeeResponse.from(employees);
+    }
+    
+    @Override
+	public Page<EmployeeResponse> getEmployees(Pageable pageable) {
+    	Page<Employee> employees = employeeRepository.findAll(pageable);
+    	return employees.map(EmployeeResponse::from);
     }
 
 	@Override

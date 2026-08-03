@@ -7,7 +7,9 @@ import org.springframework.data.domain.Pageable;
 
 public interface EmployeeService {
 	
-	List<EmployeeResponse> getAllEmployees();
+	List<EmployeeResponse> getEmployees();
+	
+	Page<EmployeeResponse> getEmployees(Pageable pageable);
 	
 	List<EmployeeResponse> getEmployeesAboveDepartmentAverage();
 	

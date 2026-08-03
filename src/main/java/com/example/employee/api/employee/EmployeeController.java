@@ -74,8 +74,7 @@ public class EmployeeController {
 	        @PageableDefault Pageable pageable) {
     	for (Sort.Order order : pageable.getSort()) {
     	    if (!ALLOWED_SORT_FIELDS.contains(order.getProperty())) {
-    	        throw new InvalidRequestException(
-    	                "Invalid sort field: " + order.getProperty());
+    	        throw new InvalidRequestException("Invalid sort field: " + order.getProperty());
     	    }
     	}
     	
@@ -83,9 +82,21 @@ public class EmployeeController {
     	return ResponseEntity.ok(employees);
     }
     
+//    @GetMapping
+//    public ResponseEntity<List<EmployeeResponse>> search(EmployeeSearchCriteria criteria) {
+//    	List<EmployeeResponse> employees = employeeService.search(criteria);
+//    	return ResponseEntity.ok(employees);
+//    }
+    
     @GetMapping
-    public ResponseEntity<List<EmployeeResponse>> search(EmployeeSearchCriteria criteria) {
-    	List<EmployeeResponse> employees = employeeService.search(criteria);
+    public ResponseEntity<Page<EmployeeResponse>> getEmployees(@PageableDefault Pageable pageable) {
+    	for (Sort.Order order : pageable.getSort()) {
+    	    if (!ALLOWED_SORT_FIELDS.contains(order.getProperty())) {
+    	        throw new InvalidRequestException("Invalid sort field: " + order.getProperty());
+    	    }
+    	}
+    	
+    	Page<EmployeeResponse> employees = employeeService.getEmployees(pageable);
     	return ResponseEntity.ok(employees);
     }
     
