@@ -32,7 +32,7 @@ public class EmployeeController {
 	private static final Set<String> ALLOWED_SORT_FIELDS = Set.of(
 	        "name",
 	        "salary",
-	        "department"
+	        "department.name"
 	);
 
 	private final EmployeeService employeeService;
