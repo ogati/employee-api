@@ -38,7 +38,6 @@ public class EmployeeSpecification {
                     ));
             }
             
-            Predicate e = cb.and(predicates.toArray(Predicate[]::new));
             return cb.and(predicates.toArray(Predicate[]::new));
         };
     }
